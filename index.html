@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; margin: 50px; background-color: #f8f9fa; }
+        #game-container { width: 300px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); position: relative; }
+        #click-count { font-size: 24px; margin-bottom: 10px; }
+        #level, #exp-bar, #flav-coins { margin-top: 20px; }
+        #exp-progress { height: 20px; background-color: #28a745; border-radius: 5px; }
+        #click-effect { position: absolute; display: none; font-size: 20px; color: #28a745; }
+        #shop, #quests { margin-top: 20px; }
+        .completed { background-color: #28a745 !important; color: #fff; }
+        .locked { background-color: #ccc !important; color: #666; }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <h2 class="mb-4">Welcome to the Clicker Game!</h2>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password">
+        </div>
+        <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-container" style="display: none;">
+        <h1 class="mb-4">Clicker Game</h1>
+        <p id="click-count">Clicks: 0</p>
+        <p id="level">Level: 1</p>
+        <div id="exp-bar">
+            <div id="exp-progress"></div>
+        </div>
+        <div id="flav-coins">FlavCoins: 0</div>
+        <button class="btn btn-success" onclick="clickHandler()">Click me!</button>
+
+        <div id="shop" class="mt-4">
+            <h2>Shop</h2>
+            <button class="btn btn-info" onclick="openShop()">Open Shop</button>
+        </div>
+
+        <div id="quests" class="mt-4">
+            <h2>Quests</h2>
+            <button class="btn btn-primary" onclick="openQuests()">Open Quests</button>
+        </div>
+
+        <!-- Click Effect Animation -->
+        <div id="click-effect"></div>
+    </div>
+
+     <!-- Shop Modal -->
+     <div class="modal fade" id="shopModal" tabindex="-1" role="dialog" aria-labelledby="shopModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shopModalLabel">Shop</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Buy Upgrade (Cost: 10 clicks)</p>
+                    <button class="btn btn-info" onclick="buyUpgrade()">Buy Upgrade</button>
+                    <p class="mt-2">Buy Click Multiplier (Cost: 50 clicks)</p>
+                    <button class="btn btn-warning" onclick="buyMultiplier()">Buy Click Multiplier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quests Modal -->
+    <div class="modal fade" id="questsModal" tabindex="-1" role="dialog" aria-labelledby="questsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="questsModalLabel">Quests</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>Available Quests</h3>
+                    <div class="quest" id="quest1" onclick="completeQuest(1)">
+                        <button class="btn btn-outline-primary" id="quest1-btn">Quest 1: Click 50 times<span id="quest1-reward" class="float-right">Reward: 20 FlavCoins</span></button>
+                    </div>
+                    <div class="quest" id="quest2" onclick="completeQuest(2)">
+                        <button class="btn btn-outline-primary" id="quest2-btn">Quest 2: Reach Level 5<span id="quest2-reward" class="float-right">Reward: 30 FlavCoins</span></button>
+                    </div>
+                    <div class="quest" id="quest3" onclick="completeQuest(3)">
+                        <button class="btn btn-outline-primary" id="quest3-btn">Quest 3: Buy an upgrade<span id="quest3-reward" class="float-right">Reward: 15 FlavCoins</span></button>
+                    </div>
+                    <!-- Add more quests here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clicks = 0;
+        let clickMultiplier = 1;
+        let questsCompleted = 0;
+        let exp = 0;
+        let level = 1;
+        let flavCoins = 0;
+
+        function startGame() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username && password) {
+                document.getElementById("menu").style.display = "none";
+                document.getElementById("game-container").style.display = "block";
+                displayQuest();
+            }
+        }
+
+        function clickHandler() {
+            clicks += clickMultiplier;
+            exp += 1;
+
+            // Update level and reset exp if level up
+            if (exp >= 10 * level) {
+                level++;
+                exp = 0;
+            }
+
+            updateClickCount();
+            updateLevel();
+            updateExpBar();
+            playClickAnimation();
+            saveGameData();
+        }
+
+        function updateLevel() {
+            document.getElementById("level").textContent = `Level: ${level}`;
+        }
+
+        function updateExpBar() {
+            const progress = (exp / (10 * level)) * 100;
+            document.getElementById("exp-progress").style.width = `${progress}%`;
+        }
+
+        function playClickAnimation() {
+            const clickEffect = document.getElementById("click-effect");
+            clickEffect.style.display = "block";
+            clickEffect.innerHTML = "+1";
+
+            // Position the click effect at the click location
+            const xPos = event.clientX - 20; // Adjust for better visual alignment
+            const yPos = event.clientY - 20; // Adjust for better visual alignment
+            clickEffect.style.left = xPos + "px";
+            clickEffect.style.top = yPos + "px";
+
+            // Animate the click effect
+            setTimeout(() => {
+                clickEffect.style.display = "none";
+            }, 500);
+        }
+
+        function openShop() {
+            $('#shopModal').modal('show');
+        }
+
+        function openQuests() {
+            $('#questsModal').modal('show');
+        }
+
+        function buyUpgrade() {
+            if (clicks >= 10) {
+                clicks -= 10;
+                clickMultiplier *= 2;
+                updateClickCount();
+                alert("Upgrade purchased!");
+                saveGameData();
+            } else {
+                alert("Not enough clicks to buy the upgrade.");
+            }
+        }
+
+        function buyMultiplier() {
+            if (clicks >= 50) {
+                clicks -= 50;
+                clickMultiplier *= 2;
+                updateClickCount();
+                alert("Click multiplier purchased!");
+                saveGameData();
+            } else {
+                alert("Not enough clicks to buy the click multiplier.");
+            }
+        }
+
+        function generateRandomQuest() {
+            const questOptions = [
+                "Click 20 times in 10 seconds.",
+                "Reach 100 total clicks.",
+                "Buy an upgrade from the shop."
+            ];
+            return questOptions[Math.floor(Math.random() * questOptions.length)];
+        }
+
+        function displayQuest() {
+            document.getElementById("quest-description").textContent = generateRandomQuest();
+        }
+
+        function completeQuest(questId) {
+            if (questId === 1 && clicks >= 50 && document.getElementById("quest1").classList.contains("completed") === false) {
+                clicks -= 50;
+                flavCoins += 20;
+                document.getElementById("quest1").classList.add("completed");
+                alert("Quest 1 completed! You earned 20 FlavCoins.");
+                saveGameData();
+            } else if (questId === 2 && level >= 5 && document.getElementById("quest2").classList.contains("completed") === false) {
+                flavCoins += 30;
+                document.getElementById("quest2").classList.add("completed");
+                alert("Quest 2 completed! You earned 30 FlavCoins.");
+                saveGameData();
+            } else if (questId === 3 && document.getElementById("quest3").classList.contains("completed") === false) {
+                flavCoins += 15;
+                document.getElementById("quest3").classList.add("completed");
+                alert("Quest 3 completed! You earned 15 FlavCoins.");
+                saveGameData();
+            } else {
+                alert("You cannot complete this quest yet.");
+            }
+        }
+
+        function updateClickCount() {
+            document.getElementById("click-count").textContent = `Clicks: ${clicks * clickMultiplier}`;
+        }
+
+        function saveGameData() {
+            localStorage.setItem("clicks", clicks);
+            localStorage.setItem("exp", exp);
+            localStorage.setItem("level", level);
+            localStorage.setItem("flavCoins", flavCoins);
+        }
+
+        function loadGameData() {
+            const savedClicks = localStorage.getItem("clicks");
+            const savedExp = localStorage.getItem("exp");
+            const savedLevel = localStorage.getItem("level");
+            const savedFlavCoins = localStorage.getItem("flavCoins");
+
+            if (savedClicks && savedExp && savedLevel && savedFlavCoins) {
+                clicks = parseInt(savedClicks);
+                exp = parseInt(savedExp);
+                level = parseInt(savedLevel);
+                flavCoins = parseInt(savedFlavCoins);
+                updateClickCount();
+                updateLevel();
+                updateExpBar();
+                document.getElementById("flav-coins").textContent = `FlavCoins: ${flavCoins}`;
+            }
+        }
+
+        loadGameData();
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
