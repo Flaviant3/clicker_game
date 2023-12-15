@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clicker Game</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="menu">
+      <h2 class="mb-4">Welcome to the Clicker Game!</h2>
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" id="username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" id="password" />
+      </div>
+      <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-container" style="display: none">
+      <h1 class="mb-4">Clicker Game</h1>
+      <p id="click-count">Clicks: 0</p>
+      <p id="level">Level: 1</p>
+      <div id="exp-bar">
+        <div id="exp-progress"></div>
+      </div>
+      <div id="flav-coins">FlavCoins: 0</div>
+      <button class="btn btn-success" onclick="clickHandler(event)">
+        Click me!
+      </button>
+
+      <div id="shop" class="mt-4">
+        <h2>Shop</h2>
+        <button class="btn btn-info" onclick="openShop()">Open Shop</button>
+      </div>
+
+      <div id="quests" class="mt-4">
+        <h2>Quests</h2>
+        <button class="btn btn-primary btn-quests" onclick="openQuests()">
+          Open Quests
+        </button>
+      </div>
+
+      <!-- Click Effect Animation -->
+      <div id="click-effect"></div>
+    </div>
+
+    <div id="quest-description"></div>
+
+    <!-- Shop Modal -->
+    <div
+      class="modal fade"
+      id="shopModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="shopModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="shopModalLabel">Shop</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Buy Upgrade (Cost: 10 clicks)</p>
+            <button class="btn btn-info" onclick="buyUpgrade()">
+              Buy Upgrade
+            </button>
+            <p class="mt-2">Buy Click Multiplier (Cost: 50 clicks)</p>
+            <button class="btn btn-warning" onclick="buyMultiplier()">
+              Buy Click Multiplier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quests Modal -->
+    <div
+      class="modal fade"
+      id="questsModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="questsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content modal-content-quests">
+          <div class="modal-header modal-header-quests">
+            <h5 class="modal-title modal-title-quests" id="questsModalLabel">
+              Quests
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body modal-body-quests">
+            <h3>Available Quests</h3>
+            <div class="quest" id="quest1" onclick="completeQuest(1)">
+              <button
+                class="btn btn-outline-primary-quests"
+                id="quest1-btn"
+                onclick="completeQuest(1)"
+              >
+                Quest 1: Click 50 times
+                <span class="float-right quest-reward"
+                  >Reward: 20 FlavCoins</span
+                >
+              </button>
+            </div>
+            <div class="quest" id="quest2" onclick="completeQuest(2)">
+              <button class="btn btn-outline-primary-quests" id="quest2-btn">
+                Quest 2: Reach Level 5
+                <span class="float-right quest-reward"
+                  >Reward: 30 FlavCoins</span
+                >
+              </button>
+            </div>
+            <div class="quest" id="quest3" onclick="completeQuest(3)">
+              <button class="btn btn-outline-primary-quests" id="quest3-btn">
+                Quest 3: Buy an upgrade
+                <span class="float-right quest-reward"
+                  >Reward: 15 FlavCoins</span
+                >
+              </button>
+            </div>
+            <div class="quest" id="quest4" onclick="completeQuest(4)">
+              <button class="btn btn-outline-primary-quests" id="quest4-btn">
+                Quest 4: Buy a click multiplier
+                <span class="float-right quest-reward"
+                  >Reward: 25 FlavCoins</span
+                >
+              </button>
+            </div>
+            <div class="quest" id="quest5" onclick="completeQuest(5)">
+                <button class="btn btn-outline-primary-quests" id="quest5-btn">
+                Quest 5: Click 100 times
+                <span class="float-right quest-reward"
+                    >Reward: 50 FlavCoins</span
+                >
+                </button>
+                </div>
+            <div class="quest" id="quest6" onclick="completeQuest(6)">
+                <button class="btn btn-outline-primary-quests" id="quest6-btn">
+                Quest 6: Reach Level 10
+                <span class="float-right quest-reward"
+                    >Reward: 100 FlavCoins</span
+                >
+                </button>
+                </div>
+            <div class="quest" id="quest7" onclick="completeQuest(7)">
+                <button class="btn btn-outline-primary-quests" id="quest7-btn">
+                Quest 7: Buy 2 upgrades
+                <span class="float-right quest-reward"
+                    >Reward: 50 FlavCoins</span
+                >
+                </button>
+                </div>
+            <div class="quest" id="quest8" onclick="completeQuest(8)">
+                <button class="btn btn-outline-primary-quests" id="quest8-btn">
+                Quest 8: Buy 2 click multipliers
+                <span class="float-right quest-reward"
+                    >Reward: 75 FlavCoins</span
+                >
+                </button>
+                </div>
+            <div class="quest" id="quest9" onclick="completeQuest(9)">
+                <button class="btn btn-outline-primary-quests" id="quest9-btn">
+                Quest 9: Click 200 times
+                <span class="float-right quest-reward"
+                    >Reward: 100 FlavCoins</span
+                >
+                </button>
+                </div>
+            <div class="quest" id="quest10" onclick="completeQuest(10)">
+                <button class="btn btn-outline-primary-quests" id="quest10-btn">
+                Quest 10: Reach Level 15
+                <span class="float-right quest-reward"
+                    >Reward: 150 FlavCoins</span
+                >
+                </button>
+                </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="flav-coins-display" class="float-right mt-2">
+        FlavCoins: <span id="flav-coins">0</span>
+      </div>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

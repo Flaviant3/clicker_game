@@ -1,0 +1,115 @@
+body {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  margin: 50px;
+  background-color: #f8f9fa;
+}
+#game-container {
+  width: 300px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+#click-count {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+#level,
+#exp-bar,
+#flav-coins {
+  margin-top: 20px;
+}
+#exp-progress {
+  height: 20px;
+  background-color: #28a745;
+  border-radius: 5px;
+}
+#click-effect {
+  position: absolute;
+  display: none;
+  font-size: 20px;
+  color: #28a745;
+}
+#shop,
+#quests {
+  margin-top: 20px;
+}
+.completed {
+  background-color: #28a745 !important;
+  color: #fff;
+}
+.locked {
+  background-color: #ccc !important;
+  color: #666;
+}
+
+/* Ajoutez ces styles à votre balise style existante */
+.modal-content-quests {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header-quests {
+  background-color: #007bff; /* Couleur de l'en-tête de la pop-up des quêtes */
+  color: #fff;
+}
+
+.modal-title-quests {
+  font-size: 24px;
+}
+
+.modal-body-quests {
+  padding: 20px;
+}
+
+.btn-quests {
+  background-color: #007bff; /* Couleur du bouton "Quêtes" */
+  color: #fff;
+}
+
+.btn-quests:hover {
+  background-color: #0056b3; /* Couleur au survol du bouton "Quêtes" */
+}
+
+.btn-outline-primary-quests {
+  border-color: #007bff; /* Couleur de la bordure du bouton de quête */
+  color: #007bff;
+}
+
+.btn-outline-primary-quests:hover {
+  background-color: #007bff; /* Couleur au survol du bouton de quête */
+  color: #fff;
+}
+
+.quest-notification {
+  position: fixed;
+  background-color: #28a745; /* Default background color */
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.quest-notification-auto {
+  position: fixed;
+  background-color: #28a745; /* Default background color */
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.quest-reward {
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.quest {
+  margin-bottom: 10px;
+}
